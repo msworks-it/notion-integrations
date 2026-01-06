@@ -1,0 +1,30 @@
+name: Deploy Multi-Service
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            
+            cd /var/www/notion-integrations
+            git pull origin main
+            
+            echo "Installazione dipendenze nei sottomoduli..."
+            find . -name "package.json" -not -path "*/node_modules/*" -execdir ~/.bun/bin/bun install \;
+            
+            pm2 startOrReload ecosystem.config.js --update-env
+            
+            pm2 save
