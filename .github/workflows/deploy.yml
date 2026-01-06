@@ -18,6 +18,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
+
+            git config --global --add safe.directory /var/www/notion-integrations
             
             cd /var/www/notion-integrations
             git pull origin main
