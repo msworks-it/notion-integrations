@@ -21,10 +21,14 @@ jobs:
             
             cd /var/www/notion-integrations
             git pull origin main
-            
-            echo "Installazione dipendenze nei sottomoduli..."
+
+            echo "📦 Installazione dipendenze..."
             find . -name "package.json" -not -path "*/node_modules/*" -execdir ~/.bun/bin/bun install \;
-            
+
+            # Cerca ovunque ci sia un file 'schema.prisma' ed esegue il generate in quella cartella
+            echo "💎 Generazione Prisma Client..."
+            find . -name "schema.prisma" -not -path "*/node_modules/*" -execdir ~/.bun/bin/bunx prisma generate \;
+
+            echo "🚀 Riavvio processi PM2..."
             pm2 startOrReload ecosystem.config.js --update-env
-            
             pm2 save
