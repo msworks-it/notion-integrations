@@ -2,7 +2,7 @@ import type { contact_messages } from "../generated/prisma/client";
 import { notion } from "./notion";
 import { prisma } from "./prisma";
 
-export const MIN_LAST_SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+export const MIN_LAST_SYNC_INTERVAL_MS = 1 * 30 * 1000; // 0.5 minutes
 
 /**
  * Synchronizes contacts from PostgreSQL to another system (likely Notion).
