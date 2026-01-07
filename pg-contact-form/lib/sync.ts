@@ -79,7 +79,10 @@ async function updateLastSyncTime() {
 }
 
 async function createRecord(item: contact_messages) {
-  await notion.pages.create({
+  if(item.synced)
+    return;
+
+  const createdPage = await notion.pages.create({
     parent: {
       database_id: process.env.DATABASE_ID!,
     },
@@ -112,10 +115,23 @@ async function createRecord(item: contact_messages) {
       },
     },
   });
+
+  if(createdPage.id)
+    await prisma.contact_messages.update({
+      where: {
+        id: item.id,
+      },
+      data: {
+        synced: true,
+      },
+    });
 }
 
 async function getContactsFromPSQL() {
   return await prisma.contact_messages.findMany({
+    where: {
+      synced: false
+    },
     orderBy: {
       createdAt: "desc",
     },
